@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<title>Italian Word Blaster — FINAL</title>
+		<style>
+			:root {
+				--bg: #0b0f14;
+				--panel: #121821;
+				--text: #e8eef6;
+				--muted: #9fb2c8;
+				--card: #0f141c;
+				--shadow: 0 10px 30px rgba(0, 0, 0, 0.35),
+					inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+				--green: #29a36d;
+				--red: #d93b3b;
+				--blue: #2f7bdc;
+				--gold: #e0b000;
+			}
+			* {
+				box-sizing: border-box;
+			}
+			html,
+			body {
+				height: 100%;
+			}
+			body {
+				margin: 0;
+				font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Ubuntu,
+					Cantarell, 'Helvetica Neue', Arial;
+				color: var(--text);
+				background: var(--bg);
+				background-image: radial-gradient(
+						1200px 600px at -15% -10%,
+						rgba(41, 163, 109, 0.08),
+						transparent
+					),
+					radial-gradient(
+						1200px 600px at 115% 110%,
+						rgba(217, 59, 59, 0.08),
+						transparent
+					),
+					radial-gradient(
+						600px 300px at 50% -10%,
+						rgba(255, 255, 255, 0.04),
+						transparent
+					);
+			}
+			.wrap {
+				max-width: 1200px;
+				margin: 0 auto;
+				padding: 24px;
+			}
+			header {
+				display: flex;
+				gap: 16px;
+				align-items: center;
+				justify-content: space-between;
+				margin-bottom: 16px;
+			}
+			.brand {
+				display: flex;
+				gap: 14px;
+				align-items: center;
+			}
+			.logo {
+				width: 44px;
+				height: 44px;
+				border-radius: 12px;
+				position: relative;
+				box-shadow: var(--shadow);
+				background: linear-gradient(135deg, #1b1f27, #0e131b);
+			}
+			.flag {
+				position: absolute;
+				inset: 4px;
+				border-radius: 9px;
+				background: linear-gradient(
+					90deg,
+					#2db665 33%,
+					#f5f5f5 33% 66%,
+					#e24343 0
+				);
+			}
+			h1 {
+				font-size: clamp(20px, 2.6vw, 30px);
+				margin: 0;
+			}
+			.sub {
+				color: var(--muted);
+				font-size: 14px;
+			}
+
+			.controls {
+				display: grid;
+				grid-template-columns: 2fr 1fr 1fr 1fr;
+				gap: 12px;
+				margin: 8px 0;
+			}
+			.panel {
+				background: var(--panel);
+				border-radius: 16px;
+				padding: 14px;
+				box-shadow: var(--shadow);
+			}
+			.ctrl {
+				display: flex;
+				flex-direction: column;
+				gap: 8px;
+			}
+			label {
+				font-size: 12px;
+				color: var(--muted);
+			}
+			input[type='number'],
+			select {
+				width: 100%;
+				background: #0e141b;
+				color: var(--text);
+				border: 1px solid #1f2530;
+				padding: 10px;
+				border-radius: 12px;
+			}
+			.pos-pills {
+				display: flex;
+				flex-wrap: wrap;
+				gap: 8px;
+			}
+			.pill {
+				padding: 8px 12px;
+				border-radius: 999px;
+				border: 1px solid #263042;
+				background: #0e141b;
+				cursor: pointer;
+				user-select: none;
+			}
+			.pill input {
+				display: none;
+			}
+			.pill.active {
+				box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.06),
+					inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+			}
+			.pill[data-pos='noun'].active {
+				background: rgba(41, 163, 109, 0.18);
+				border-color: #2e7d57;
+			}
+			.pill[data-pos='verb'].active {
+				background: rgba(217, 59, 59, 0.18);
+				border-color: #8d2b2b;
+			}
+			.pill[data-pos='adj'].active {
+				background: rgba(47, 123, 220, 0.18);
+				border-color: #2c63a8;
+			}
+			.pill[data-pos='adv'].active {
+				background: rgba(224, 176, 0, 0.18);
+				border-color: #7d6200;
+			}
+
+			.grid {
+				display: grid;
+				grid-template-columns: 1.2fr 0.8fr;
+				gap: 16px;
+				margin-top: 10px;
+			}
+
+			.qcard {
+				background: linear-gradient(180deg, #111824, #0c121a);
+				border-radius: 20px;
+				padding: 24px;
+				box-shadow: var(--shadow);
+				position: relative;
+				overflow: hidden;
+			}
+			.qbadge {
+				position: absolute;
+				top: 14px;
+				right: 14px;
+				font-size: 12px;
+				padding: 6px 10px;
+				border-radius: 999px;
+				background: rgba(255, 255, 255, 0.06);
+				border: 1px solid rgba(255, 255, 255, 0.08);
+			}
+			.qword {
+				font-size: clamp(26px, 6vw, 56px);
+				letter-spacing: 0.5px;
+				font-weight: 800;
+				margin: 22px 0 6px;
+			}
+			.hint {
+				color: var(--muted);
+				font-size: 13px;
+			}
+
+			.optgrid {
+				display: grid;
+				grid-template-columns: repeat(3, 1fr);
+				gap: 12px;
+			}
+			.optbtn {
+				border-radius: 16px;
+				padding: 16px;
+				background: var(--card);
+				border: 1px solid #1d2430;
+				cursor: pointer;
+				box-shadow: var(--shadow);
+				transition: 0.15s transform, 0.2s border-color, 0.2s box-shadow;
+				color: #fff;
+			}
+			.optbtn:hover {
+				transform: translateY(-2px);
+			}
+			.optbtn.correct {
+				border-color: #2db665;
+				box-shadow: 0 0 0 2px rgba(45, 182, 101, 0.3);
+			}
+			.shake {
+				animation: shake 0.3s;
+			}
+			@keyframes shake {
+				10%,
+				90% {
+					transform: translateX(-1px);
+				}
+				20%,
+				80% {
+					transform: translateX(2px);
+				}
+				30%,
+				50%,
+				70% {
+					transform: translateX(-4px);
+				}
+				40%,
+				60% {
+					transform: translateX(4px);
+				}
+			}
+
+			.score {
+				display: flex;
+				gap: 12px;
+				align-items: center;
+				flex-wrap: wrap;
+			}
+			.chip {
+				padding: 8px 12px;
+				border-radius: 999px;
+				background: #0e141b;
+				border: 1px solid #212a38;
+			}
+			.chip.good {
+				border-color: #204c36;
+				color: #9ee2bf;
+			}
+			.chip.bad {
+				border-color: #5a1b1b;
+				color: #ffb3b3;
+			}
+
+			.progress {
+				position: relative;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				aspect-ratio: 1;
+				width: 120px;
+				margin: auto;
+			}
+			.progress svg {
+				filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
+			}
+			.progress .center {
+				position: absolute;
+				text-align: center;
+			}
+			.progress .center strong {
+				display: block;
+				font-size: 20px;
+			}
+			.progress .center span {
+				font-size: 11px;
+				color: var(--muted);
+			}
+
+			.side {
+				display: flex;
+				flex-direction: column;
+				gap: 14px;
+			}
+
+			.pos-legend {
+				display: flex;
+				gap: 10px;
+				flex-wrap: wrap;
+			}
+			.legend-item {
+				display: flex;
+				align-items: center;
+				gap: 8px;
+				font-size: 12px;
+				color: var(--muted);
+			}
+			.swatch {
+				width: 10px;
+				height: 10px;
+				border-radius: 2px;
+			}
+
+			.footer {
+				margin-top: 16px;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				color: var(--muted);
+				font-size: 12px;
+			}
+			.btn {
+				background: #162233;
+				color: var(--text);
+				border: 1px solid #253249;
+				padding: 10px 14px;
+				border-radius: 12px;
+				cursor: pointer;
+			}
+			.btn:active {
+				transform: translateY(1px);
+			}
+
+			.qcard:before {
+				content: '';
+				position: absolute;
+				left: 0;
+				top: 0;
+				bottom: 0;
+				width: 6px;
+				background: linear-gradient(var(--green), var(--green));
+			}
+			.qcard[data-pos='verb']:before {
+				background: linear-gradient(var(--red), var(--red));
+			}
+			.qcard[data-pos='adj']:before {
+				background: linear-gradient(var(--blue), var(--blue));
+			}
+			.qcard[data-pos='adv']:before {
+				background: linear-gradient(var(--gold), var(--gold));
+			}
+
+			.overlay {
+				position: fixed;
+				inset: 0;
+				background: rgba(0, 0, 0, 0.65);
+				backdrop-filter: blur(2px);
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				z-index: 50;
+			}
+			.win {
+				position: relative;
+				background: linear-gradient(180deg, #111824, #0c121a);
+				border-radius: 24px;
+				padding: 26px 26px 20px;
+				box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6);
+				text-align: center;
+				max-width: 520px;
+			}
+			.trophy {
+				font-size: 68px;
+				line-height: 1;
+				display: block;
+			}
+			.win h2 {
+				margin: 6px 0 4px;
+				font-size: 28px;
+			}
+			.win p {
+				color: var(--muted);
+				margin: 0 0 14px;
+			}
+
+			#fw {
+				position: fixed;
+				inset: 0;
+				pointer-events: none;
+				z-index: 40;
+			}
+
+			@media (max-width: 980px) {
+				.grid {
+					grid-template-columns: 1fr;
+				}
+				.optgrid {
+					grid-template-columns: 1fr 1fr;
+				}
+				.controls {
+					grid-template-columns: 1fr;
+				}
+				.progress {
+					width: 100px;
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<div id="root"></div>
+		<canvas id="fw"></canvas>
+
+		<!-- PACKS: everything we built is embedded below. Add more by duplicating a JSON script with id="pack-*" and an array of {it,en,pos}. -->
+		<script id="pack-core" type="application/json">
+			{
+				"words": [
+					{ "it": "casa", "en": "house", "pos": "noun" },
+					{ "it": "uomo", "en": "man", "pos": "noun" },
+					{ "it": "donna", "en": "woman", "pos": "noun" },
+					{ "it": "bambino", "en": "child", "pos": "noun" },
+					{ "it": "essere", "en": "to be", "pos": "verb" },
+					{ "it": "avere", "en": "to have", "pos": "verb" },
+					{ "it": "bello", "en": "beautiful", "pos": "adj" },
+					{ "it": "sempre", "en": "always", "pos": "adv" }
+				]
+			}
+		</script>
+
+		<!-- Verbs (Mega) -->
+		<script id="pack-verbs" type="application/json">
+			{
+				"words": [
+					{ "it": "fare", "en": "to do/make", "pos": "verb" },
+					{ "it": "dire", "en": "to say", "pos": "verb" },
+					{ "it": "potere", "en": "to be able to", "pos": "verb" },
+					{ "it": "andare", "en": "to go", "pos": "verb" },
+					{ "it": "venire", "en": "to come", "pos": "verb" },
+					{ "it": "vedere", "en": "to see", "pos": "verb" },
+					{ "it": "sapere", "en": "to know (facts)", "pos": "verb" },
+					{ "it": "stare", "en": "to stay", "pos": "verb" },
+					{ "it": "prendere", "en": "to take", "pos": "verb" },
+					{ "it": "mettere", "en": "to put", "pos": "verb" },
+					{ "it": "trovare", "en": "to find", "pos": "verb" },
+					{ "it": "pensare", "en": "to think", "pos": "verb" },
+					{ "it": "parlare", "en": "to speak", "pos": "verb" },
+					{ "it": "mangiare", "en": "to eat", "pos": "verb" },
+					{ "it": "bere", "en": "to drink", "pos": "verb" },
+					{ "it": "leggere", "en": "to read", "pos": "verb" },
+					{ "it": "scrivere", "en": "to write", "pos": "verb" },
+					{ "it": "dormire", "en": "to sleep", "pos": "verb" },
+					{ "it": "aprire", "en": "to open", "pos": "verb" },
+					{ "it": "chiudere", "en": "to close", "pos": "verb" },
+					{ "it": "studiare", "en": "to study", "pos": "verb" },
+					{ "it": "lavorare", "en": "to work", "pos": "verb" },
+					{ "it": "usare", "en": "to use", "pos": "verb" },
+					{ "it": "giocare", "en": "to play", "pos": "verb" },
+					{ "it": "comprare", "en": "to buy", "pos": "verb" },
+					{ "it": "vendere", "en": "to sell", "pos": "verb" },
+					{ "it": "camminare", "en": "to walk", "pos": "verb" },
+					{ "it": "correre", "en": "to run", "pos": "verb" },
+					{ "it": "sentire", "en": "to hear/feel", "pos": "verb" },
+					{ "it": "ascoltare", "en": "to listen", "pos": "verb" },
+					{ "it": "guardare", "en": "to watch", "pos": "verb" },
+					{ "it": "vivere", "en": "to live", "pos": "verb" },
+					{ "it": "morire", "en": "to die", "pos": "verb" },
+					{ "it": "amare", "en": "to love", "pos": "verb" },
+					{ "it": "odiare", "en": "to hate", "pos": "verb" },
+					{ "it": "ricordare", "en": "to remember", "pos": "verb" },
+					{ "it": "dimenticare", "en": "to forget", "pos": "verb" },
+					{ "it": "aspettare", "en": "to wait", "pos": "verb" },
+					{ "it": "partire", "en": "to leave", "pos": "verb" },
+					{ "it": "arrivare", "en": "to arrive", "pos": "verb" },
+					{ "it": "capire", "en": "to understand", "pos": "verb" },
+					{ "it": "chiedere", "en": "to ask", "pos": "verb" },
+					{ "it": "rispondere", "en": "to answer", "pos": "verb" },
+					{ "it": "aiutare", "en": "to help", "pos": "verb" },
+					{ "it": "provare", "en": "to try", "pos": "verb" },
+					{ "it": "cambiare", "en": "to change", "pos": "verb" },
+					{ "it": "portare", "en": "to bring/wear", "pos": "verb" },
+					{ "it": "tornare", "en": "to return", "pos": "verb" },
+					{ "it": "scegliere", "en": "to choose", "pos": "verb" },
+					{ "it": "chiamare", "en": "to call", "pos": "verb" },
+					{ "it": "costruire", "en": "to build", "pos": "verb" },
+					{ "it": "cucinare", "en": "to cook", "pos": "verb" },
+					{ "it": "lavare", "en": "to wash", "pos": "verb" },
+					{ "it": "imparare", "en": "to learn", "pos": "verb" },
+					{ "it": "insegnare", "en": "to teach", "pos": "verb" },
+					{ "it": "pagare", "en": "to pay", "pos": "verb" },
+					{ "it": "viaggiare", "en": "to travel", "pos": "verb" },
+					{ "it": "guidare", "en": "to drive", "pos": "verb" },
+					{ "it": "entrare", "en": "to enter", "pos": "verb" },
+					{ "it": "uscire", "en": "to go out", "pos": "verb" }
+				]
+			}
+		</script>
+
+		<!-- Nouns (Ultra) -->
+		<script id="pack-nouns" type="application/json">
+			{
+				"words": [
+					{ "it": "giorno", "en": "day", "pos": "noun" },
+					{ "it": "tempo", "en": "time/weather", "pos": "noun" },
+					{ "it": "anno", "en": "year", "pos": "noun" },
+					{ "it": "mese", "en": "month", "pos": "noun" },
+					{ "it": "settimana", "en": "week", "pos": "noun" },
+					{ "it": "vita", "en": "life", "pos": "noun" },
+					{ "it": "mano", "en": "hand", "pos": "noun" },
+					{ "it": "occhio", "en": "eye", "pos": "noun" },
+					{ "it": "parola", "en": "word", "pos": "noun" },
+					{ "it": "strada", "en": "street", "pos": "noun" },
+					{ "it": "famiglia", "en": "family", "pos": "noun" },
+					{ "it": "città", "en": "city", "pos": "noun" },
+					{ "it": "paese", "en": "country/town", "pos": "noun" },
+					{ "it": "lavoro", "en": "work/job", "pos": "noun" },
+					{ "it": "soldi", "en": "money", "pos": "noun" },
+					{ "it": "problema", "en": "problem", "pos": "noun" },
+					{ "it": "soluzione", "en": "solution", "pos": "noun" },
+					{ "it": "domanda", "en": "question", "pos": "noun" },
+					{ "it": "risposta", "en": "answer", "pos": "noun" },
+					{ "it": "scuola", "en": "school", "pos": "noun" },
+					{ "it": "università", "en": "university", "pos": "noun" },
+					{ "it": "studente", "en": "student", "pos": "noun" },
+					{ "it": "professore", "en": "professor", "pos": "noun" },
+					{ "it": "libro", "en": "book", "pos": "noun" },
+					{ "it": "pagina", "en": "page", "pos": "noun" },
+					{ "it": "storia", "en": "history/story", "pos": "noun" },
+					{ "it": "giornale", "en": "newspaper", "pos": "noun" },
+					{ "it": "telefono", "en": "telephone", "pos": "noun" },
+					{ "it": "computer", "en": "computer", "pos": "noun" }
+				]
+			}
+		</script>
+
+		<!-- Adjectives & Adverbs (Giga) -->
+		<script id="pack-adjectives" type="application/json">
+			{
+				"words": [
+					{ "it": "brutto", "en": "ugly", "pos": "adj" },
+					{ "it": "grande", "en": "big", "pos": "adj" },
+					{ "it": "piccolo", "en": "small", "pos": "adj" },
+					{ "it": "lungo", "en": "long", "pos": "adj" },
+					{ "it": "corto", "en": "short", "pos": "adj" },
+					{ "it": "alto", "en": "tall/high", "pos": "adj" },
+					{ "it": "basso", "en": "short/low", "pos": "adj" },
+					{ "it": "nuovo", "en": "new", "pos": "adj" },
+					{ "it": "buono", "en": "good", "pos": "adj" },
+					{ "it": "cattivo", "en": "bad", "pos": "adj" },
+					{ "it": "caldo", "en": "hot", "pos": "adj" },
+					{ "it": "freddo", "en": "cold", "pos": "adj" },
+					{ "it": "facile", "en": "easy", "pos": "adj" },
+					{ "it": "difficile", "en": "difficult", "pos": "adj" },
+					{ "it": "felice", "en": "happy", "pos": "adj" },
+					{ "it": "triste", "en": "sad", "pos": "adj" },
+					{ "it": "forte", "en": "strong", "pos": "adj" },
+					{ "it": "debole", "en": "weak", "pos": "adj" }
+				]
+			}
+		</script>
+		<script id="pack-adverbs" type="application/json">
+			{
+				"words": [
+					{ "it": "mai", "en": "never", "pos": "adv" },
+					{ "it": "spesso", "en": "often", "pos": "adv" },
+					{ "it": "raramente", "en": "rarely", "pos": "adv" },
+					{ "it": "oggi", "en": "today", "pos": "adv" },
+					{ "it": "domani", "en": "tomorrow", "pos": "adv" },
+					{ "it": "ieri", "en": "yesterday", "pos": "adv" },
+					{ "it": "presto", "en": "early/soon", "pos": "adv" },
+					{ "it": "tardi", "en": "late", "pos": "adv" },
+					{ "it": "adesso", "en": "now", "pos": "adv" },
+					{ "it": "poi", "en": "then/later", "pos": "adv" },
+					{ "it": "prima", "en": "before", "pos": "adv" },
+					{ "it": "dopo", "en": "after", "pos": "adv" },
+					{ "it": "qui", "en": "here", "pos": "adv" },
+					{ "it": "lì", "en": "there", "pos": "adv" },
+					{ "it": "bene", "en": "well", "pos": "adv" },
+					{ "it": "male", "en": "badly", "pos": "adv" }
+				]
+			}
+		</script>
+
+		<!-- Themed Packs: Travel, Food, Emotions, Business, Nature, Tech, Arts, Sports, Health, Politics, Science, Household -->
+		<script id="pack-travel" type="application/json">
+			{
+				"words": [
+					{ "it": "aeroporto", "en": "airport", "pos": "noun" },
+					{ "it": "stazione", "en": "station", "pos": "noun" },
+					{ "it": "biglietto", "en": "ticket", "pos": "noun" },
+					{ "it": "valigia", "en": "suitcase", "pos": "noun" },
+					{ "it": "passaporto", "en": "passport", "pos": "noun" },
+					{ "it": "albergo", "en": "hotel", "pos": "noun" },
+					{ "it": "prenotazione", "en": "reservation", "pos": "noun" },
+					{ "it": "mappa", "en": "map", "pos": "noun" },
+					{ "it": "turista", "en": "tourist", "pos": "noun" },
+					{ "it": "spiaggia", "en": "beach", "pos": "noun" }
+				]
+			}
+		</script>
+		<script id="pack-food" type="application/json">
+			{
+				"words": [
+					{ "it": "colazione", "en": "breakfast", "pos": "noun" },
+					{ "it": "pranzo", "en": "lunch", "pos": "noun" },
+					{ "it": "cena", "en": "dinner", "pos": "noun" },
+					{ "it": "antipasto", "en": "starter", "pos": "noun" },
+					{ "it": "primo", "en": "first course", "pos": "noun" },
+					{ "it": "secondo", "en": "second course", "pos": "noun" },
+					{ "it": "contorno", "en": "side dish", "pos": "noun" },
+					{ "it": "dolce", "en": "dessert", "pos": "noun" },
+					{ "it": "conto", "en": "bill/check", "pos": "noun" },
+					{ "it": "ristorante", "en": "restaurant", "pos": "noun" }
+				]
+			}
+		</script>
+		<script id="pack-emotions" type="application/json">
+			{
+				"words": [
+					{ "it": "arrabbiato", "en": "angry", "pos": "adj" },
+					{ "it": "calmo", "en": "calm", "pos": "adj" },
+					{ "it": "ansioso", "en": "anxious", "pos": "adj" },
+					{ "it": "sorpreso", "en": "surprised", "pos": "adj" },
+					{ "it": "gentile", "en": "kind", "pos": "adj" },
+					{ "it": "timido", "en": "shy", "pos": "adj" },
+					{ "it": "coraggioso", "en": "brave", "pos": "adj" },
+					{ "it": "ottimista", "en": "optimistic", "pos": "adj" },
+					{ "it": "pessimista", "en": "pessimistic", "pos": "adj" }
+				]
+			}
+		</script>
+		<script id="pack-business" type="application/json">
+			{
+				"words": [
+					{ "it": "azienda", "en": "company", "pos": "noun" },
+					{ "it": "impresa", "en": "firm", "pos": "noun" },
+					{ "it": "ufficio", "en": "office", "pos": "noun" },
+					{ "it": "riunione", "en": "meeting", "pos": "noun" },
+					{ "it": "contratto", "en": "contract", "pos": "noun" },
+					{ "it": "documento", "en": "document", "pos": "noun" },
+					{ "it": "firma", "en": "signature", "pos": "noun" },
+					{ "it": "ricerca", "en": "research", "pos": "noun" },
+					{ "it": "lezione", "en": "lesson", "pos": "noun" },
+					{ "it": "esame", "en": "exam", "pos": "noun" }
+				]
+			}
+		</script>
+		<script id="pack-nature" type="application/json">
+			{
+				"words": [
+					{ "it": "natura", "en": "nature", "pos": "noun" },
+					{ "it": "ambiente", "en": "environment", "pos": "noun" },
+					{ "it": "cielo", "en": "sky", "pos": "noun" },
+					{ "it": "sole", "en": "sun", "pos": "noun" },
+					{ "it": "luna", "en": "moon", "pos": "noun" },
+					{ "it": "stella", "en": "star", "pos": "noun" },
+					{ "it": "vento", "en": "wind", "pos": "noun" },
+					{ "it": "pioggia", "en": "rain", "pos": "noun" },
+					{ "it": "neve", "en": "snow", "pos": "noun" },
+					{ "it": "nuvola", "en": "cloud", "pos": "noun" }
+				]
+			}
+		</script>
+		<script id="pack-tech" type="application/json">
+			{
+				"words": [
+					{ "it": "tecnologia", "en": "technology", "pos": "noun" },
+					{ "it": "cellulare", "en": "mobile phone", "pos": "noun" },
+					{ "it": "rete", "en": "network", "pos": "noun" },
+					{ "it": "software", "en": "software", "pos": "noun" },
+					{ "it": "programma", "en": "program", "pos": "noun" },
+					{ "it": "schermo", "en": "screen", "pos": "noun" },
+					{ "it": "tastiera", "en": "keyboard", "pos": "noun" },
+					{ "it": "stampante", "en": "printer", "pos": "noun" },
+					{ "it": "batteria", "en": "battery", "pos": "noun" },
+					{ "it": "caricatore", "en": "charger", "pos": "noun" }
+				]
+			}
+		</script>
+		<script id="pack-arts" type="application/json">
+			{
+				"words": [
+					{ "it": "arte", "en": "art", "pos": "noun" },
+					{ "it": "pittura", "en": "painting", "pos": "noun" },
+					{ "it": "musica", "en": "music", "pos": "noun" },
+					{ "it": "film", "en": "movie", "pos": "noun" },
+					{ "it": "teatro", "en": "theatre", "pos": "noun" },
+					{ "it": "poesia", "en": "poetry", "pos": "noun" },
+					{ "it": "romanzo", "en": "novel", "pos": "noun" },
+					{ "it": "fotografia", "en": "photograph", "pos": "noun" },
+					{ "it": "mostra", "en": "exhibition", "pos": "noun" },
+					{ "it": "cultura", "en": "culture", "pos": "noun" }
+				]
+			}
+		</script>
+		<script id="pack-sports" type="application/json">
+			{
+				"words": [
+					{ "it": "sport", "en": "sport", "pos": "noun" },
+					{ "it": "partita", "en": "match", "pos": "noun" },
+					{ "it": "squadra", "en": "team", "pos": "noun" },
+					{ "it": "giocatore", "en": "player", "pos": "noun" },
+					{ "it": "allenatore", "en": "coach", "pos": "noun" },
+					{ "it": "calcio", "en": "soccer", "pos": "noun" },
+					{ "it": "nuoto", "en": "swimming", "pos": "noun" },
+					{ "it": "corsa", "en": "running", "pos": "noun" },
+					{ "it": "gara", "en": "competition", "pos": "noun" },
+					{ "it": "vittoria", "en": "victory", "pos": "noun" }
+				]
+			}
+		</script>
+		<script id="pack-health" type="application/json">
+			{
+				"words": [
+					{ "it": "ospedale", "en": "hospital", "pos": "noun" },
+					{ "it": "clinica", "en": "clinic", "pos": "noun" },
+					{ "it": "medico", "en": "doctor", "pos": "noun" },
+					{ "it": "infermiere", "en": "nurse", "pos": "noun" },
+					{ "it": "paziente", "en": "patient", "pos": "noun" },
+					{ "it": "farmacia", "en": "pharmacy", "pos": "noun" },
+					{ "it": "medicina", "en": "medicine", "pos": "noun" },
+					{ "it": "pillola", "en": "pill", "pos": "noun" },
+					{ "it": "operazione", "en": "operation", "pos": "noun" },
+					{ "it": "cura", "en": "treatment", "pos": "noun" }
+				]
+			}
+		</script>
+		<script id="pack-politics" type="application/json">
+			{
+				"words": [
+					{ "it": "politica", "en": "politics", "pos": "noun" },
+					{ "it": "governo", "en": "government", "pos": "noun" },
+					{ "it": "parlamento", "en": "parliament", "pos": "noun" },
+					{ "it": "presidente", "en": "president", "pos": "noun" },
+					{ "it": "ministro", "en": "minister", "pos": "noun" },
+					{ "it": "legge", "en": "law", "pos": "noun" },
+					{ "it": "giustizia", "en": "justice", "pos": "noun" },
+					{ "it": "elezione", "en": "election", "pos": "noun" },
+					{ "it": "partito", "en": "party", "pos": "noun" },
+					{ "it": "democrazia", "en": "democracy", "pos": "noun" }
+				]
+			}
+		</script>
+		<script id="pack-science" type="application/json">
+			{
+				"words": [
+					{ "it": "scienza", "en": "science", "pos": "noun" },
+					{ "it": "fisica", "en": "physics", "pos": "noun" },
+					{ "it": "chimica", "en": "chemistry", "pos": "noun" },
+					{ "it": "biologia", "en": "biology", "pos": "noun" },
+					{ "it": "astronomia", "en": "astronomy", "pos": "noun" },
+					{ "it": "universo", "en": "universe", "pos": "noun" },
+					{ "it": "galassia", "en": "galaxy", "pos": "noun" },
+					{ "it": "pianeta", "en": "planet", "pos": "noun" },
+					{ "it": "orbita", "en": "orbit", "pos": "noun" },
+					{ "it": "satellite", "en": "satellite", "pos": "noun" }
+				]
+			}
+		</script>
+		<script id="pack-household" type="application/json">
+			{
+				"words": [
+					{ "it": "appartamento", "en": "apartment", "pos": "noun" },
+					{ "it": "stanza", "en": "room", "pos": "noun" },
+					{ "it": "salotto", "en": "living room", "pos": "noun" },
+					{ "it": "cucina", "en": "kitchen", "pos": "noun" },
+					{ "it": "bagno", "en": "bathroom", "pos": "noun" },
+					{ "it": "letto", "en": "bed", "pos": "noun" },
+					{ "it": "sedia", "en": "chair", "pos": "noun" },
+					{ "it": "tavolo", "en": "table", "pos": "noun" },
+					{ "it": "armadio", "en": "wardrobe", "pos": "noun" },
+					{ "it": "lampada", "en": "lamp", "pos": "noun" }
+				]
+			}
+		</script>
+
+		<!-- React + ReactDOM + Babel -->
+		<script
+			crossorigin
+			src="https://unpkg.com/react@18/umd/react.development.js"
+		></script>
+		<script
+			crossorigin
+			src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"
+		></script>
+		<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+		<script type="text/babel">
+			const POS = { noun: 'noun', verb: 'verb', adj: 'adj', adv: 'adv' }
+			const POS_META = {
+				noun: {
+					label: 'Noun',
+					color:
+						getComputedStyle(document.documentElement)
+							.getPropertyValue('--green')
+							.trim() || '#29a36d',
+				},
+				verb: {
+					label: 'Verb',
+					color:
+						getComputedStyle(document.documentElement)
+							.getPropertyValue('--red')
+							.trim() || '#d93b3b',
+				},
+				adj: {
+					label: 'Adjective',
+					color:
+						getComputedStyle(document.documentElement)
+							.getPropertyValue('--blue')
+							.trim() || '#2f7bdc',
+				},
+				adv: {
+					label: 'Adverb',
+					color:
+						getComputedStyle(document.documentElement)
+							.getPropertyValue('--gold')
+							.trim() || '#e0b000',
+				},
+			}
+
+			function readPacks() {
+				const scripts = [
+					...document.querySelectorAll(
+						'script[type="application/json"][id^="pack-"],script[type="application/json"][id="pack-core"]'
+					),
+				]
+				const out = []
+				for (const s of scripts) {
+					try {
+						const obj = JSON.parse(s.textContent.trim())
+						if (Array.isArray(obj)) out.push(...obj)
+						else if (obj && Array.isArray(obj.words)) out.push(...obj.words)
+					} catch (e) {
+						console.warn('Bad pack', s.id, e)
+					}
+				}
+				// normalise, filter, dedupe
+				const key = (w) =>
+					`${(w.it || '').toLowerCase()}|${(w.en || '').toLowerCase()}|${(
+						w.pos || ''
+					).toLowerCase()}`
+				const map = new Map()
+				for (const w of out) {
+					const pos = (w.pos || '').toLowerCase()
+					if (!POS[pos]) continue
+					const rec = { it: String(w.it), en: String(w.en), pos }
+					if (rec.it && rec.en) map.set(key(rec), rec)
+				}
+				return [...map.values()]
+			}
+
+			const rand = (n) => Math.floor(Math.random() * n)
+			const shuffle = (arr) => {
+				const a = arr.slice()
+				for (let i = a.length - 1; i > 0; i--) {
+					const j = Math.floor(Math.random() * (i + 1))
+					;[a[i], a[j]] = [a[j], a[i]]
+				}
+				return a
+			}
+			function useLocalStorage(key, initial) {
+				const [state, setState] = React.useState(() => {
+					try {
+						const raw = localStorage.getItem(key)
+						return raw ? JSON.parse(raw) : initial
+					} catch {
+						return initial
+					}
+				})
+				React.useEffect(() => {
+					try {
+						localStorage.setItem(key, JSON.stringify(state))
+					} catch {}
+				}, [key, state])
+				return [state, setState]
+			}
+
+			function ProgressRing({ value, max, color }) {
+				const pct = Math.max(0, Math.min(1, max ? value / max : 0))
+				const size = 120,
+					s = 10,
+					r = (size - s) / 2,
+					C = 2 * Math.PI * r,
+					off = C * (1 - pct)
+				return (
+					<div className="progress">
+						<svg width={size} height={size} viewBox={`0 0 ${size} ${size}`}>
+							<circle
+								cx={size / 2}
+								cy={size / 2}
+								r={r}
+								fill="none"
+								stroke="#1f2a3a"
+								strokeWidth={s}
+							/>
+							<circle
+								cx={size / 2}
+								cy={size / 2}
+								r={r}
+								fill="none"
+								stroke={color}
+								strokeWidth={s}
+								strokeLinecap="round"
+								strokeDasharray={`${C} ${C}`}
+								strokeDashoffset={off}
+								style={{ transition: 'stroke-dashoffset .5s ease' }}
+							/>
+						</svg>
+						<div className="center">
+							<strong>{value}</strong>
+							<span>target {max}</span>
+						</div>
+					</div>
+				)
+			}
+			function Legend() {
+				return (
+					<div className="pos-legend">
+						{Object.entries(POS_META).map(([k, v]) => (
+							<div key={k} className="legend-item">
+								<span className="swatch" style={{ background: v.color }} />{' '}
+								{v.label}
+							</div>
+						))}
+					</div>
+				)
+			}
+
+			function useFireworks() {
+				const ref = React.useRef(null)
+				React.useEffect(() => {
+					ref.current = document.getElementById('fw')
+				}, [])
+				return React.useCallback(() => {
+					const canvas = ref.current
+					if (!canvas) return
+					const ctx = canvas.getContext('2d')
+					const DPR = Math.max(1, window.devicePixelRatio || 1)
+					canvas.width = window.innerWidth * DPR
+					canvas.height = window.innerHeight * DPR
+					ctx.scale(DPR, DPR)
+					const parts = []
+					const colors = ['#2db665', '#e24343', '#2f7bdc', '#e0b000', '#ffffff']
+					const spawn = (x, y) => {
+						const n = 80 + rand(60)
+						for (let i = 0; i < n; i++) {
+							parts.push({
+								x,
+								y,
+								vx: (Math.random() * 2 - 1) * (4 + Math.random() * 3),
+								vy: (Math.random() * 2 - 1) * (4 + Math.random() * 3),
+								life: 60 + rand(40),
+								color: colors[rand(colors.length)],
+								size: 2 + Math.random() * 2,
+							})
+						}
+					}
+					for (let i = 0; i < 5; i++)
+						setTimeout(
+							() =>
+								spawn(
+									80 + Math.random() * (window.innerWidth - 160),
+									80 + Math.random() * (window.innerHeight - 200)
+								),
+							i * 200
+						)
+					let frame = 0
+					const tick = () => {
+						frame++
+						ctx.clearRect(0, 0, canvas.width, canvas.height)
+						for (const p of parts) {
+							p.vy += 0.04
+							p.x += p.vx
+							p.y += p.vy
+							p.life--
+							p.size *= 0.985
+							if (p.life > 0 && p.size > 0.3) {
+								ctx.globalCompositeOperation = 'lighter'
+								ctx.fillStyle = p.color
+								ctx.beginPath()
+								ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2)
+								ctx.fill()
+							}
+						}
+						if (frame < 260) requestAnimationFrame(tick)
+						else ctx.clearRect(0, 0, canvas.width, canvas.height)
+					}
+					tick()
+				}, [])
+			}
+
+			function App() {
+				const base = React.useMemo(() => readPacks(), [])
+				const [settings, setSettings] = useLocalStorage('itwb_final_settings', {
+					numOptions: 3,
+					targetWins: 10,
+					pos: { noun: true, verb: true, adj: true, adv: true },
+				})
+				const [score, setScore] = React.useState({ correct: 0, incorrect: 0 })
+				const [state, setState] = React.useState({
+					word: null,
+					options: [],
+					status: null,
+				})
+				const [stats, setStats] = React.useState({
+					total: 0,
+					byPos: { noun: 0, verb: 0, adj: 0, adv: 0 },
+				})
+				const askedRef = React.useRef(new Set())
+				const fw = useFireworks()
+
+				const pool = React.useMemo(
+					() => base.filter((w) => settings.pos[w.pos]),
+					[base, settings]
+				)
+				React.useEffect(() => {
+					const byPos = { noun: 0, verb: 0, adj: 0, adv: 0 }
+					for (const w of base) {
+						if (byPos[w.pos] != null) byPos[w.pos]++
+					}
+					setStats({ total: base.length, byPos })
+				}, [base])
+
+				const nextQuestion = React.useCallback(() => {
+					if (pool.length === 0) {
+						setState({ word: null, options: [], status: null })
+						return
+					}
+					if (askedRef.current.size >= pool.length) askedRef.current.clear()
+					let idx
+					let tries = 0
+					do {
+						idx = rand(pool.length)
+						tries++
+					} while (askedRef.current.has(idx) && tries < 10)
+					askedRef.current.add(idx)
+					const q = pool[idx]
+					const same = shuffle(
+						pool.filter((w, i) => i !== idx && w.pos === q.pos)
+					).slice(0, Math.max(0, settings.numOptions - 1))
+					const need = settings.numOptions - 1 - same.length
+					const extra =
+						need > 0
+							? shuffle(
+									pool.filter((w, i) => i !== idx && !same.includes(w))
+							  ).slice(0, need)
+							: []
+					const opts = shuffle([q, ...same, ...extra]).map((w) => ({
+						en: w.en,
+						correct: w === q,
+					}))
+					setState({ word: q, options: opts, status: null })
+				}, [pool, settings.numOptions])
+				React.useEffect(() => {
+					nextQuestion()
+				}, [nextQuestion])
+
+				function togglePos(k) {
+					setSettings((s) => ({ ...s, pos: { ...s.pos, [k]: !s.pos[k] } }))
+				}
+				function handleAnswer(opt, i) {
+					if (!state.word) return
+					if (opt.correct) {
+						setScore((sc) => ({ ...sc, correct: sc.correct + 1 }))
+						setState((st) => ({ ...st, status: 'correct' }))
+						setTimeout(() => {
+							if (score.correct + 1 >= settings.targetWins) {
+								setWinOpen(true)
+								fw()
+							} else nextQuestion()
+						}, 450)
+					} else {
+						setScore((sc) => ({ ...sc, incorrect: sc.incorrect + 1 }))
+						const btn = document.querySelector(`[data-opt="${i}"]`)
+						if (btn) {
+							btn.classList.add('shake')
+							setTimeout(() => btn.classList.remove('shake'), 300)
+						}
+						setState((st) => ({ ...st, status: 'wrong' }))
+						setTimeout(() => nextQuestion(), 650)
+					}
+				}
+
+				const [winOpen, setWinOpen] = React.useState(false)
+				function resetGame() {
+					setScore({ correct: 0, incorrect: 0 })
+					setWinOpen(false)
+					askedRef.current.clear()
+					nextQuestion()
+				}
+
+				const posLabel = state.word ? POS_META[state.word.pos].label : ''
+				const posColor = state.word ? POS_META[state.word.pos].color : '#29a36d'
+
+				return (
+					<div className="wrap">
+						<header>
+							<div className="brand">
+								<div className="logo">
+									<div className="flag" />
+								</div>
+								<div>
+									<h1>Italian Word Blaster — FINAL</h1>
+									<div className="sub">
+										Single‑file • Huge packs • Dark Italian vibe • Fireworks 🎆
+									</div>
+								</div>
+							</div>
+							<div className="score">
+								<div className="chip good">✅ Correct: {score.correct}</div>
+								<div className="chip bad">❌ Wrong: {score.incorrect}</div>
+								<button className="btn" onClick={resetGame}>
+									Reset
+								</button>
+							</div>
+						</header>
+
+						<div className="controls panel">
+							<div className="ctrl">
+								<label>Word types to practise</label>
+								<div className="pos-pills">
+									{Object.keys(POS).map((key) => (
+										<div
+											key={key}
+											data-pos={key}
+											className={`pill ${settings.pos[key] ? 'active' : ''}`}
+											onClick={() => togglePos(key)}>
+											<input
+												type="checkbox"
+												checked={!!settings.pos[key]}
+												readOnly
+											/>{' '}
+											{POS_META[key].label}
+										</div>
+									))}
+								</div>
+							</div>
+							<div className="ctrl">
+								<label>Choices per question</label>
+								<input
+									type="number"
+									min="2"
+									max="6"
+									value={settings.numOptions}
+									onChange={(e) =>
+										setSettings((s) => ({
+											...s,
+											numOptions: Math.max(
+												2,
+												Math.min(6, parseInt(e.target.value || 3))
+											),
+										}))
+									}
+								/>
+							</div>
+							<div className="ctrl">
+								<label>Target number of correct answers</label>
+								<input
+									type="number"
+									min="3"
+									max="200"
+									value={settings.targetWins}
+									onChange={(e) =>
+										setSettings((s) => ({
+											...s,
+											targetWins: Math.max(
+												3,
+												Math.min(200, parseInt(e.target.value || 10))
+											),
+										}))
+									}
+								/>
+							</div>
+							<div className="ctrl">
+								<label>Pack stats</label>
+								<div
+									style={{
+										display: 'grid',
+										gridTemplateColumns: 'repeat(4,1fr)',
+										gap: 6,
+										fontSize: 12,
+										color: 'var(--muted)',
+									}}>
+									<div>
+										All: <strong>{stats.total}</strong>
+									</div>
+									<div>
+										🟩 N: <strong>{stats.byPos.noun}</strong>
+									</div>
+									<div>
+										🟥 V: <strong>{stats.byPos.verb}</strong>
+									</div>
+									<div>
+										🟦 Adj: <strong>{stats.byPos.adj}</strong> · 🟨 Adv:{' '}
+										<strong>{stats.byPos.adv}</strong>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<div className="grid">
+							<div className="qcard" data-pos={state.word?.pos || 'noun'}>
+								<div className="qbadge">{posLabel}</div>
+								<div
+									className="qword"
+									style={{
+										textShadow: `0 2px 0 rgba(0,0,0,.45), 0 0 30px ${posColor}40`,
+									}}>
+									{state.word?.it || '—'}
+								</div>
+								<div className="hint">Tap the correct English meaning</div>
+								<div className="optgrid" style={{ marginTop: 16 }}>
+									{state.options.map((opt, i) => (
+										<button
+											key={i}
+											data-opt={i}
+											className={`optbtn ${
+												state.status && (opt.correct ? 'correct' : '')
+											}`}
+											onClick={() => handleAnswer(opt, i)}
+											style={{
+												borderColor: state.word ? posColor + '40' : '#1d2430',
+											}}>
+											<div
+												style={{
+													fontSize: 'clamp(16px,2.2vw,20px)',
+													fontWeight: 700,
+												}}>
+												{opt.en}
+											</div>
+										</button>
+									))}
+								</div>
+							</div>
+							<div className="side">
+								<div
+									className="panel"
+									style={{ display: 'grid', placeItems: 'center' }}>
+									<ProgressRing
+										value={score.correct}
+										max={settings.targetWins}
+										color={posColor}
+									/>
+								</div>
+								<div className="panel">
+									<Legend />
+								</div>
+								<div
+									className="panel"
+									style={{ fontSize: 12, color: 'var(--muted)' }}>
+									<strong>Tip:</strong> To add more words, duplicate any{' '}
+									<code>
+										&lt;script id="pack-..." type="application/json"&gt;
+									</code>{' '}
+									with an array of{' '}
+									<code>{`{"it":"parola","en":"word","pos":"noun"}`}</code>. The
+									app auto‑merges & de‑dupes on load.
+								</div>
+							</div>
+						</div>
+
+						<div className="footer">
+							<div>Packs merged: {stats.total} words loaded</div>
+							<div>v3.0 • single‑file</div>
+						</div>
+
+						{winOpen && (
+							<div className="overlay" onClick={() => setWinOpen(false)}>
+								<div className="win panel" onClick={(e) => e.stopPropagation()}>
+									<div className="trophy">🏆</div>
+									<h2>Ben fatto!</h2>
+									<p>
+										You reached your target of {settings.targetWins} correct
+										answers.
+										<br />
+										Score: <strong>{score.correct}</strong> ✅ &nbsp;{' '}
+										<strong>{score.incorrect}</strong> ❌
+									</p>
+									<button
+										className="btn"
+										onClick={() => {
+											setWinOpen(false)
+											resetGame()
+										}}>
+										Play again
+									</button>
+								</div>
+							</div>
+						)}
+					</div>
+				)
+			}
+
+			const root = ReactDOM.createRoot(document.getElementById('root'))
+			root.render(<App />)
+		</script>
+	</body>
+</html>
+
