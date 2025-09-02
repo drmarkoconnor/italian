@@ -409,8 +409,9 @@
 		<div id="root"></div>
 		<canvas id="fw"></canvas>
 
-		<!-- PACKS: everything we built is embedded below. Add more by duplicating a JSON script with id="pack-*" and an array of {it,en,pos}. -->
-		<script id="pack-core" type="application/json">
+	   <!-- PACKS: everything is embedded below. Add more by duplicating a JSON script with id="pack-*" and an array of {it,en,pos}.
+		   Optional: add data-label on the script tag for a friendly pack name (shown in the UI). -->
+	   <script id="pack-core" type="application/json" data-label="Core Basics">
 			{
 				"words": [
 					{ "it": "casa", "en": "house", "pos": "noun" },
@@ -426,7 +427,7 @@
 		</script>
 
 		<!-- Verbs (Mega) -->
-		<script id="pack-verbs" type="application/json">
+	<script id="pack-verbs" type="application/json" data-label="Common Verbs">
 			{
 				"words": [
 					{ "it": "fare", "en": "to do/make", "pos": "verb" },
@@ -494,7 +495,7 @@
 		</script>
 
 		<!-- Nouns (Ultra) -->
-		<script id="pack-nouns" type="application/json">
+	<script id="pack-nouns" type="application/json" data-label="Common Nouns">
 			{
 				"words": [
 					{ "it": "giorno", "en": "day", "pos": "noun" },
@@ -531,7 +532,7 @@
 		</script>
 
 		<!-- Adjectives & Adverbs (Giga) -->
-		<script id="pack-adjectives" type="application/json">
+	<script id="pack-adjectives" type="application/json" data-label="Adjectives">
 			{
 				"words": [
 					{ "it": "brutto", "en": "ugly", "pos": "adj" },
@@ -555,7 +556,7 @@
 				]
 			}
 		</script>
-		<script id="pack-adverbs" type="application/json">
+	<script id="pack-adverbs" type="application/json" data-label="Adverbs">
 			{
 				"words": [
 					{ "it": "mai", "en": "never", "pos": "adv" },
@@ -579,7 +580,7 @@
 		</script>
 
 		<!-- Themed Packs: Travel, Food, Emotions, Business, Nature, Tech, Arts, Sports, Health, Politics, Science, Household -->
-		<script id="pack-travel" type="application/json">
+	<script id="pack-travel" type="application/json" data-label="Travel">
 			{
 				"words": [
 					{ "it": "aeroporto", "en": "airport", "pos": "noun" },
@@ -595,7 +596,7 @@
 				]
 			}
 		</script>
-		<script id="pack-food" type="application/json">
+	<script id="pack-food" type="application/json" data-label="Food & Dining">
 			{
 				"words": [
 					{ "it": "colazione", "en": "breakfast", "pos": "noun" },
@@ -611,7 +612,7 @@
 				]
 			}
 		</script>
-		<script id="pack-emotions" type="application/json">
+	<script id="pack-emotions" type="application/json" data-label="Emotions">
 			{
 				"words": [
 					{ "it": "arrabbiato", "en": "angry", "pos": "adj" },
@@ -626,7 +627,7 @@
 				]
 			}
 		</script>
-		<script id="pack-business" type="application/json">
+	<script id="pack-business" type="application/json" data-label="Business & Office">
 			{
 				"words": [
 					{ "it": "azienda", "en": "company", "pos": "noun" },
@@ -642,7 +643,7 @@
 				]
 			}
 		</script>
-		<script id="pack-nature" type="application/json">
+	<script id="pack-nature" type="application/json" data-label="Nature & Weather">
 			{
 				"words": [
 					{ "it": "natura", "en": "nature", "pos": "noun" },
@@ -658,7 +659,7 @@
 				]
 			}
 		</script>
-		<script id="pack-tech" type="application/json">
+	<script id="pack-tech" type="application/json" data-label="Technology">
 			{
 				"words": [
 					{ "it": "tecnologia", "en": "technology", "pos": "noun" },
@@ -674,7 +675,7 @@
 				]
 			}
 		</script>
-		<script id="pack-arts" type="application/json">
+	<script id="pack-arts" type="application/json" data-label="Arts & Culture">
 			{
 				"words": [
 					{ "it": "arte", "en": "art", "pos": "noun" },
@@ -690,7 +691,7 @@
 				]
 			}
 		</script>
-		<script id="pack-sports" type="application/json">
+	<script id="pack-sports" type="application/json" data-label="Sports">
 			{
 				"words": [
 					{ "it": "sport", "en": "sport", "pos": "noun" },
@@ -706,7 +707,7 @@
 				]
 			}
 		</script>
-		<script id="pack-health" type="application/json">
+	<script id="pack-health" type="application/json" data-label="Health & Medicine">
 			{
 				"words": [
 					{ "it": "ospedale", "en": "hospital", "pos": "noun" },
@@ -722,7 +723,7 @@
 				]
 			}
 		</script>
-		<script id="pack-politics" type="application/json">
+	<script id="pack-politics" type="application/json" data-label="Politics & Civics">
 			{
 				"words": [
 					{ "it": "politica", "en": "politics", "pos": "noun" },
@@ -738,7 +739,7 @@
 				]
 			}
 		</script>
-		<script id="pack-science" type="application/json">
+	<script id="pack-science" type="application/json" data-label="Science & Space">
 			{
 				"words": [
 					{ "it": "scienza", "en": "science", "pos": "noun" },
@@ -754,7 +755,7 @@
 				]
 			}
 		</script>
-		<script id="pack-household" type="application/json">
+	<script id="pack-household" type="application/json" data-label="Household">
 			{
 				"words": [
 					{ "it": "appartamento", "en": "apartment", "pos": "noun" },
@@ -815,23 +816,61 @@
 				},
 			}
 
-			function readPacks() {
+			// helpers for importing
+			const POS_CANON = {
+				noun: 'noun', nouns: 'noun', sostantivo: 'noun',
+				verb: 'verb', verbs: 'verb', verbo: 'verb',
+				adj: 'adj', adjective: 'adj', adjectives: 'adj', aggettivo: 'adj',
+				adv: 'adv', adverb: 'adv', adverbs: 'adv', avverbio: 'adv',
+			}
+			const toCanonPos = (s) => POS_CANON[String(s || '').trim().toLowerCase()]
+
+			function readUserPacks() {
+				try {
+					const raw = localStorage.getItem('itwb_final_user_packs')
+					const arr = raw ? JSON.parse(raw) : []
+					if (!Array.isArray(arr)) return []
+					return arr
+				} catch { return [] }
+			}
+			function saveUserPacks(packs) {
+				try { localStorage.setItem('itwb_final_user_packs', JSON.stringify(packs)) } catch {}
+			}
+
+			function readPacksDetailed() {
 				const scripts = [
 					...document.querySelectorAll(
 						'script[type="application/json"][id^="pack-"],script[type="application/json"][id="pack-core"]'
 					),
 				]
+				const packs = []
 				const out = []
+				const toTitle = (id) =>
+					id
+						.replace(/^pack-/, '')
+						.replace(/-/g, ' ')
+						.replace(/\b\w/g, (c) => c.toUpperCase())
 				for (const s of scripts) {
+					const packId = s.id
+					const packLabel = s.dataset.label || toTitle(packId)
+					packs.push({ id: packId, label: packLabel })
 					try {
 						const obj = JSON.parse(s.textContent.trim())
-						if (Array.isArray(obj)) out.push(...obj)
-						else if (obj && Array.isArray(obj.words)) out.push(...obj.words)
+						const wordsArr = Array.isArray(obj) ? obj : obj?.words || []
+						for (const w of wordsArr) out.push({ ...w, __pack: packId })
 					} catch (e) {
 						console.warn('Bad pack', s.id, e)
 					}
 				}
-				// normalise, filter, dedupe
+				// include user packs from localStorage
+				const userPacks = readUserPacks()
+				for (const up of userPacks) {
+					const pid = up.id
+					packs.push({ id: pid, label: up.label || toTitle(pid) })
+					const wordsArr = Array.isArray(up.words) ? up.words : []
+					for (const w of wordsArr) out.push({ ...w, __pack: pid })
+				}
+				// normalise, filter, dedupe while tracking membership per pack
 				const key = (w) =>
 					`${(w.it || '').toLowerCase()}|${(w.en || '').toLowerCase()}|${(
 						w.pos || ''
@@ -840,10 +879,26 @@
 				for (const w of out) {
 					const pos = (w.pos || '').toLowerCase()
 					if (!POS[pos]) continue
-					const rec = { it: String(w.it), en: String(w.en), pos }
-					if (rec.it && rec.en) map.set(key(rec), rec)
+					const rec = {
+						it: String(w.it),
+						en: String(w.en),
+						pos,
+						packs: [w.__pack],
+					}
+					if (!rec.it || !rec.en) continue
+					const k = key(rec)
+					if (map.has(k)) {
+						const existing = map.get(k)
+						if (!existing.packs.includes(w.__pack)) existing.packs.push(w.__pack)
+					} else {
+						map.set(k, rec)
+					}
 				}
-				return [...map.values()]
+				const words = [...map.values()]
+				// compute counts per pack after dedupe
+				const counts = Object.fromEntries(packs.map((p) => [p.id, 0]))
+				for (const w of words) for (const pid of w.packs) counts[pid] = (counts[pid] || 0) + 1
+				return { words, packs: packs.map((p) => ({ ...p, count: counts[p.id] || 0 })) }
 			}
 
 			const rand = (n) => Math.floor(Math.random() * n)
@@ -987,12 +1042,26 @@
 			}
 
 			function App() {
-				const base = React.useMemo(() => readPacks(), [])
+				const { words: allWords, packs: packList } = React.useMemo(() => readPacksDetailed(), [])
+				const defaultPackOn = React.useMemo(
+					() => Object.fromEntries(packList.map((p) => [p.id, true])),
+					[packList]
+				)
 				const [settings, setSettings] = useLocalStorage('itwb_final_settings', {
 					numOptions: 3,
 					targetWins: 10,
 					pos: { noun: true, verb: true, adj: true, adv: true },
+					packOn: defaultPackOn,
 				})
+				// ensure any new packs default to on
+				React.useEffect(() => {
+					setSettings((s) => {
+						const next = { ...s, packOn: { ...(s.packOn || {}) } }
+						let changed = false
+						for (const p of packList) if (next.packOn[p.id] === undefined) { next.packOn[p.id] = true; changed = true }
+						return changed ? next : s
+					})
+				}, [packList])
 				const [score, setScore] = React.useState({ correct: 0, incorrect: 0 })
 				const [state, setState] = React.useState({
 					word: null,
@@ -1006,17 +1075,19 @@
 				const askedRef = React.useRef(new Set())
 				const fw = useFireworks()
 
-				const pool = React.useMemo(
-					() => base.filter((w) => settings.pos[w.pos]),
-					[base, settings]
-				)
+				const pool = React.useMemo(() => {
+					const on = settings.packOn || {}
+					return allWords.filter(
+						(w) => settings.pos[w.pos] && w.packs?.some((pid) => on[pid] !== false)
+					)
+				}, [allWords, settings.pos, settings.packOn])
 				React.useEffect(() => {
 					const byPos = { noun: 0, verb: 0, adj: 0, adv: 0 }
-					for (const w of base) {
+					for (const w of allWords) {
 						if (byPos[w.pos] != null) byPos[w.pos]++
 					}
-					setStats({ total: base.length, byPos })
-				}, [base])
+					setStats({ total: allWords.length, byPos })
+				}, [allWords])
 
 				const nextQuestion = React.useCallback(() => {
 					if (pool.length === 0) {
@@ -1054,6 +1125,83 @@
 
 				function togglePos(k) {
 					setSettings((s) => ({ ...s, pos: { ...s.pos, [k]: !s.pos[k] } }))
+				}
+				function togglePack(id) {
+					setSettings((s) => {
+						const on = s.packOn?.[id] !== false
+						return { ...s, packOn: { ...(s.packOn || {}), [id]: !on } }
+					})
+				}
+				function selectAllPacks() {
+					setSettings((s) => ({ ...s, packOn: Object.fromEntries(packList.map((p) => [p.id, true])) }))
+				}
+				function selectNoPacks() {
+					setSettings((s) => ({ ...s, packOn: Object.fromEntries(packList.map((p) => [p.id, false])) }))
+				}
+
+				// import custom pack
+				const fileInputRef = React.useRef(null)
+				function openImport() { fileInputRef.current?.click() }
+				function parseCSV(text) {
+					const lines = text.replace(/\r\n?/g, '\n').split('\n').filter(Boolean)
+					if (!lines.length) return []
+					const header = lines[0]
+					const delim = header.includes('\t') ? '\t' : (header.includes(';') ? ';' : ',')
+					const cols = header.split(new RegExp(`${delim}`)).map((c) => c.trim().toLowerCase())
+					const idx = {
+						it: cols.findIndex((c) => ['it','italian','italiano','word'].includes(c)),
+						en: cols.findIndex((c) => ['en','english','inglese','meaning','gloss','translation'].includes(c)),
+						pos: cols.findIndex((c) => ['pos','part_of_speech','type','categoria'].includes(c)),
+					}
+					const out = []
+					for (let i = 1; i < lines.length; i++) {
+						const parts = lines[i].split(new RegExp(`${delim}`)).map((x) => x.trim())
+						const it = idx.it >= 0 ? parts[idx.it] : ''
+						const en = idx.en >= 0 ? parts[idx.en] : ''
+						const pos = toCanonPos(idx.pos >= 0 ? parts[idx.pos] : '')
+						if (it && en && pos && POS[pos]) out.push({ it, en, pos })
+					}
+					return out
+				}
+				function handleImportFile(e) {
+					const f = e.target.files?.[0]
+					if (!f) return
+					const reader = new FileReader()
+					reader.onload = () => {
+						try {
+							const text = String(reader.result || '')
+							let words = []
+							if (/^[\s\n]*[\[{]/.test(text)) {
+								const obj = JSON.parse(text)
+								const arr = Array.isArray(obj) ? obj : obj?.words || []
+								for (const w of arr) {
+									const pos = toCanonPos(w.pos)
+									if (w.it && w.en && pos && POS[pos]) words.push({ it: String(w.it), en: String(w.en), pos })
+								}
+							} else {
+								words = parseCSV(text)
+							}
+							if (!words.length) return
+							const safeName = (f.name || 'import').replace(/\.[^.]+$/, '')
+							const id = `pack-user-${Date.now()}`
+							const label = `Imported: ${safeName}`
+							const packs = readUserPacks()
+							packs.push({ id, label, words })
+							saveUserPacks(packs)
+							// turn it on
+							setSettings((s) => ({ ...s, packOn: { ...(s.packOn || {}), [id]: true } }))
+							// hard refresh the computed packs by reloading page (simplest single-file approach)
+							location.reload()
+						} catch (err) {
+							console.error('Import failed', err)
+						}
+					}
+					reader.readAsText(f)
+				}
+				function clearCustomPacks() {
+					if (!confirm('Remove all imported packs?')) return
+					saveUserPacks([])
+					location.reload()
 				}
 				function handleAnswer(opt, i) {
 					if (!state.word) return
@@ -1133,6 +1281,32 @@
 								</div>
 							</div>
 							<div className="ctrl">
+								<label>Word packs to include</label>
+								<div style={{ display: 'flex', gap: 8, marginBottom: 6, flexWrap: 'wrap' }}>
+									<button className="btn" onClick={selectAllPacks}>All</button>
+									<button className="btn" onClick={selectNoPacks}>None</button>
+									<button className="btn" onClick={openImport}>Import CSV/JSON</button>
+									<button className="btn" onClick={clearCustomPacks} title="Remove all imported packs">Clear imports</button>
+									<input type="file" accept=".csv,.json,.txt,application/json,text/csv" ref={fileInputRef} onChange={handleImportFile} style={{ display: 'none' }} />
+								</div>
+								<div className="pos-pills">
+									{packList.map((p) => {
+										const on = settings.packOn?.[p.id] !== false
+										return (
+											<div
+												key={p.id}
+												className={`pill ${on ? 'active' : ''}`}
+												onClick={() => togglePack(p.id)}
+												style={{ padding: '6px 10px' }}
+												title={`${p.label} • ${p.count} words`}>
+												<input type="checkbox" checked={on} readOnly /> {p.label}
+												<span style={{ opacity: 0.7 }}> ({p.count})</span>
+											</div>
+										)
+									})}
+								</div>
+							</div>
+							<div className="ctrl">
 								<label>Choices per question</label>
 								<input
 									type="number"
@@ -1190,6 +1364,9 @@
 									<div>
 										🟦 Adj: <strong>{stats.byPos.adj}</strong> · 🟨 Adv:{' '}
 										<strong>{stats.byPos.adv}</strong>
+									</div>
+									<div style={{ gridColumn: '1 / -1' }}>
+										Pool (filters applied): <strong>{pool.length}</strong>
 									</div>
 								</div>
 							</div>
@@ -1257,8 +1434,8 @@
 						</div>
 
 						<div className="footer">
-							<div>Packs merged: {stats.total} words loaded</div>
-							<div>v3.0 • single‑file</div>
+							<div>Packs merged: {stats.total} words loaded • Pool: {pool.length}</div>
+							<div>v3.1 • single‑file</div>
 						</div>
 
 						{winOpen && (
